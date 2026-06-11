@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>全渠道销售综合看板 - 字段扩展原型</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f8f9fd;
+      --line: #e6eaf2;
+      --line-strong: #d9deea;
+      --text: #202431;
+      --muted: #737c8f;
+      --subtle: #9ba4b6;
+      --brand: #4656f6;
+      --brand-soft: #eef0ff;
+      --brand-ink: #2531b8;
+      --danger: #d63c5f;
+      --danger-soft: #fff0f4;
+      --warning: #e99520;
+      --warning-soft: #fff7ea;
+      --success: #15956f;
+      --success-soft: #eefaf6;
+      --shadow: 0 12px 30px rgba(42, 48, 69, 0.08);
+      --radius: 8px;
+      --sidebar: 68px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 1280px;
+      color: var(--text);
+      background: var(--bg);
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: var(--sidebar) 1fr;
+      min-height: 100dvh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      background: #fff;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 0;
+      gap: 24px;
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background:
+        linear-gradient(135deg, transparent 0 18%, #5d68ff 18% 43%, transparent 43%),
+        linear-gradient(45deg, transparent 10%, #6e61ff 10% 38%, transparent 38%),
+        linear-gradient(135deg, transparent 56%, #4e6cf7 56% 82%, transparent 82%);
+      transform: skewX(-8deg);
+    }
+
+    .nav {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+      justify-items: center;
+    }
+
+    .nav-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      border: 0;
+      background: transparent;
+      color: #60687a;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .nav-btn.active {
+      color: var(--brand);
+      background: var(--brand-soft);
+    }
+
+    .nav-btn svg {
+      width: 19px;
+      height: 19px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 70px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+    }
+
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      gap: 4px;
+      align-content: center;
+    }
+
+    .menu-icon span {
+      height: 2px;
+      background: #2b2f3c;
+      border-radius: 10px;
+    }
+
+    .store-switch {
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: #3e4658;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      color: #3d4351;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #bfe8ff, #78b8ff);
+      display: grid;
+      place-items: center;
+      color: #21527a;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .page-title {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #3b4150;
+    }
+
+    .canvas {
+      margin: 0 30px 32px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 22px;
+      min-height: calc(100dvh - 124px);
+    }
+
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: #f1f2f7;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid #edf0f7;
+    }
+
+    .segmented button {
+      height: 36px;
+      border: 0;
+      min-width: 58px;
+      padding: 0 16px;
+      background: transparent;
+      color: #555d6d;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .segmented button.active {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #3f4655;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .input {
+      height: 36px;
+      min-width: 160px;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      background: #fff;
+      color: #657083;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 12px;
+      font-weight: 500;
+    }
+
+    .overview {
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .hero-panel,
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel {
+      padding: 22px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 300px;
+    }
+
+    .panel-kicker {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero-main {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.85fr) minmax(380px, 1fr);
+      gap: 20px;
+      align-items: end;
+      padding: 18px 0 22px;
+    }
+
+    .primary-number {
+      display: grid;
+      gap: 10px;
+    }
+
+    .primary-label {
+      color: #4d5668;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .primary-value {
+      color: #05070d;
+      font-size: 46px;
+      line-height: 1;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .inline-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand-ink);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .pill.success {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .pill.danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-tile {
+      min-height: 118px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      padding: 14px;
+      display: grid;
+      align-content: space-between;
+      gap: 10px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .stat-value {
+      color: #1c2230;
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .stat-sub {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+    }
+
+    .strip-item {
+      padding: 14px 14px 4px;
+      border-right: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .strip-item:last-child {
+      border-right: 0;
+    }
+
+    .strip-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      margin-bottom: 8px;
+    }
+
+    .strip-value {
+      color: #232a39;
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .panel-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(650px, 1fr) minmax(650px, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      overflow: hidden;
+    }
+
+    .panel-header {
+      min-height: 58px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .export-btn {
+      height: 30px;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--brand-ink);
+      padding: 0 12px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .export-btn:hover {
+      background: var(--brand-soft);
+      border-color: #cdd3ff;
+    }
+
+    .tabs {
+      display: inline-flex;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .tabs button {
+      height: 30px;
+      border: 0;
+      border-right: 1px solid var(--line-strong);
+      background: #fff;
+      color: #555e70;
+      padding: 0 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tabs button:last-child {
+      border-right: 0;
+    }
+
+    .tabs button.active {
+      color: #fff;
+      background: var(--brand);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th {
+      height: 44px;
+      background: #eef1f7;
+      color: #747e91;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 850;
+      padding: 0 14px;
+    }
+
+    td {
+      height: 62px;
+      border-bottom: 1px solid var(--line);
+      color: #3d4554;
+      padding: 9px 14px;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    tbody tr:hover {
+      background: #fafbff;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .rank {
+      width: 30px;
+      height: 30px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #f0f2f8;
+      color: #788092;
+      font-weight: 850;
+    }
+
+    .rank.gold {
+      color: #9b6400;
+      background: linear-gradient(180deg, #ffd95f, #efad23);
+    }
+
+    .rank.silver {
+      color: #647084;
+      background: linear-gradient(180deg, #f5f7fb, #cfd5df);
+    }
+
+    .rank.bronze {
+      color: #735521;
+      background: linear-gradient(180deg, #e4c880, #b99548);
+    }
+
+    .store-cell,
+    .product-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .platform-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: inline-grid;
+      place-items: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 850;
+      flex: 0 0 auto;
+    }
+
+    .douyin { background: #10131a; }
+    .tmall { background: #ed2758; }
+    .taobao { background: #ff6a1a; }
+    .wechat { background: #20b365; }
+
+    .product-image {
+      width: 58px;
+      height: 58px;
+      border-radius: 4px;
+      object-fit: cover;
+      background: #f1f2f4;
+      border: 1px solid #edf0f5;
+      flex: 0 0 auto;
+    }
+
+    .name-stack {
+      min-width: 0;
+    }
+
+    .name {
+      color: #3a4250;
+      font-weight: 850;
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .meta {
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #f2f4fa;
+      color: #687286;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .refund-high {
+      color: var(--danger);
+      font-weight: 850;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    .store-table {
+      min-width: 1040px;
+    }
+
+    .product-table {
+      min-width: 900px;
+    }
+
+    @media (max-width: 1500px) {
+      .overview,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo" aria-label="品牌标识"></div>
+      <div class="nav" aria-label="主导航">
+        <button class="nav-btn active" title="销售总览">
+          <svg viewBox="0 0 24 24"><path d="M4 19V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="m8 14 2.4-2.4 2 2L16.5 9"/><path d="M7 17h10"/></svg>
+        </button>
+        <button class="nav-btn" title="订单">
+          <svg viewBox="0 0 24 24"><path d="M8 8V6a4 4 0 0 1 8 0v2"/><path d="M6 8h12l1 12H5L6 8Z"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="brand-row">
+          <div class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span>bebe女包旗舰店</span>
+          <button class="store-switch">切换店铺</button>
+        </div>
+        <div class="user"><div class="avatar">福</div><span>小福</span></div>
+      </header>
+
+      <div class="page-title">销售总览</div>
+
+      <section class="canvas">
+        <div class="filters">
+          <div class="segmented">
+            <button>最近30日</button>
+            <button>年</button>
+            <button>月</button>
+            <button>周</button>
+            <button class="active">昨天</button>
+            <button>今天</button>
+            <button>自定义</button>
+          </div>
+          <div class="input">2026-06-10 <span>▾</span></div>
+          <div class="field">店铺：<div class="input">全部店铺 <span>▾</span></div></div>
+          <div class="field">平台：<div class="input">全部平台 <span>▾</span></div></div>
+        </div>
+
+        <div class="overview">
+          <section class="hero-panel">
+            <div class="panel-kicker">昨日全渠道经营概览</div>
+            <div class="hero-main">
+              <div class="primary-number">
+                <div class="primary-label">GMV</div>
+                <div class="primary-value">¥84,390.3</div>
+                <div class="inline-meta">
+                  <span class="pill success">环比 +8.6%</span>
+                  <span>下单口径，含退款前成交额</span>
+                </div>
+              </div>
+
+              <div class="hero-stats">
+                <article class="stat-tile">
+                  <div class="stat-label">实付金额</div>
+                  <div class="stat-value">¥58,093.2</div>
+                  <div class="stat-sub"><span class="pill success">环比 +5.2%</span></div>
+                </article>
+                <article class="stat-tile">
+                  <div class="stat-label">净销售额</div>
+                  <div class="stat-value">¥31,796.1</div>
+                </article>
+                <article class="stat-tile">
+                  <div class="stat-label">推广金额</div>
+                  <div class="stat-value">¥9,860.0</div>
+                  <div class="stat-sub">占实付金额 16.97%</div>
+                </article>
+              </div>
+            </div>
+
+            <div class="metric-strip">
+              <div class="strip-item">
+                <div class="strip-label">支付订单数</div>
+                <div class="strip-value">243</div>
+                <div class="inline-meta">客单价 ¥239.1</div>
+              </div>
+              <div class="strip-item">
+                <div class="strip-label">支付件数</div>
+                <div class="strip-value">301</div>
+                <div class="inline-meta">件单价 ¥193.0</div>
+              </div>
+              <div class="strip-item">
+                <div class="strip-label">退款金额</div>
+                <div class="strip-value">¥26,297.1</div>
+                <div class="inline-meta"><span class="pill danger">退款率 31.16%</span></div>
+              </div>
+              <div class="strip-item">
+                <div class="strip-label">订单连带率</div>
+                <div class="strip-value">1.24</div>
+                <div class="inline-meta">支付件数 / 支付订单</div>
+              </div>
+              <div class="strip-item">
+                <div class="strip-label">主力店贡献</div>
+                <div class="strip-value">91.14%</div>
+                <div class="inline-meta">抖音旗舰店</div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="section-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">店铺销售排行</div>
+              <div class="panel-actions">
+                <button class="export-btn" data-download="store">导出</button>
+                <div class="tabs"><button class="active">按GMV</button><button>按净销售额</button><button>按推广金额</button></div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="store-table">
+                <colgroup>
+                  <col style="width: 64px" />
+                  <col style="width: 220px" />
+                  <col style="width: 110px" />
+                  <col style="width: 110px" />
+                  <col style="width: 110px" />
+                  <col style="width: 94px" />
+                  <col style="width: 94px" />
+                  <col style="width: 92px" />
+                  <col style="width: 94px" />
+                  <col style="width: 100px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>排名</th>
+                    <th>平台店铺</th>
+                    <th class="num">GMV</th>
+                    <th class="num">实付金额</th>
+                    <th class="num">净销售额</th>
+                    <th class="num">订单 / 客单</th>
+                    <th class="num">件数 / 件单</th>
+                    <th class="num">退款</th>
+                    <th class="num">推广金额</th>
+                    <th class="num">销售占比</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="rank gold">1</span></td>
+                    <td><div class="store-cell"><span class="platform-badge douyin">抖</span><div class="name-stack"><div class="name">bebe女包旗舰店</div><div class="meta">抖音</div></div></div></td>
+                    <td class="num">¥76,910</td>
+                    <td class="num">¥52,986</td>
+                    <td class="num">¥29,880</td>
+                    <td class="num">220<br><span class="meta">¥240.8</span></td>
+                    <td class="num">266<br><span class="meta">¥199.2</span></td>
+                    <td class="num">¥23,106<br><span class="meta refund-high">30.0%</span></td>
+                    <td class="num">¥8,920</td>
+                    <td class="num">91.14%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank silver">2</span></td>
+                    <td><div class="store-cell"><span class="platform-badge taobao">淘</span><div class="name-stack"><div class="name">bebe</div><div class="meta">淘宝</div></div></div></td>
+                    <td class="num">¥5,896.3</td>
+                    <td class="num">¥3,848.0</td>
+                    <td class="num">¥1,271.4</td>
+                    <td class="num">17<br><span class="meta">¥226.4</span></td>
+                    <td class="num">29<br><span class="meta">¥132.7</span></td>
+                    <td class="num">¥2,576.6<br><span class="meta refund-high">43.5%</span></td>
+                    <td class="num">¥620</td>
+                    <td class="num">6.99%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank bronze">3</span></td>
+                    <td><div class="store-cell"><span class="platform-badge tmall">猫</span><div class="name-stack"><div class="name">bebe女包旗舰店</div><div class="meta">天猫</div></div></div></td>
+                    <td class="num">¥1,584</td>
+                    <td class="num">¥1,259.2</td>
+                    <td class="num">¥644.7</td>
+                    <td class="num">6<br><span class="meta">¥209.9</span></td>
+                    <td class="num">6<br><span class="meta">¥209.9</span></td>
+                    <td class="num">¥350.0<br><span class="meta">22.1%</span></td>
+                    <td class="num">¥320</td>
+                    <td class="num">1.88%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank">4</span></td>
+                    <td><div class="store-cell"><span class="platform-badge wechat">视</span><div class="name-stack"><div class="name">bebe祈尚女包</div><div class="meta">视频号</div></div></div></td>
+                    <td class="num">¥0</td>
+                    <td class="num">¥0</td>
+                    <td class="num">¥0</td>
+                    <td class="num">0<br><span class="meta">-</span></td>
+                    <td class="num">0<br><span class="meta">-</span></td>
+                    <td class="num">¥0<br><span class="meta">-</span></td>
+                    <td class="num">¥0</td>
+                    <td class="num">0.00%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div class="panel-title">商品销售排行</div>
+              <div class="panel-actions">
+                <button class="export-btn" data-download="product">导出</button>
+                <div class="tabs"><button class="active">按GMV</button><button>按件数</button><button>按退款率</button></div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="product-table">
+                <colgroup>
+                  <col style="width: 64px" />
+                  <col style="width: 390px" />
+                  <col style="width: 110px" />
+                  <col style="width: 100px" />
+                  <col style="width: 100px" />
+                  <col style="width: 92px" />
+                  <col style="width: 92px" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>排名</th>
+                    <th>商品</th>
+                    <th>平台</th>
+                    <th class="num">GMV</th>
+                    <th class="num">实付金额</th>
+                    <th class="num">件数 / 件单</th>
+                    <th class="num">退款</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="rank gold">1</span></td>
+                    <td>
+                      <div class="product-cell">
+                        <img class="product-image" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23f2f0eb'/%3E%3Cpath d='M35 74c6-25 14-35 25-35s20 10 25 35l6 18H29l6-18Z' fill='%2314161b'/%3E%3Cpath d='M48 45c2-11 22-11 24 0' stroke='%235f6269' stroke-width='5' fill='none'/%3E%3C/svg%3E" />
+                        <div class="name-stack">
+                          <div class="name">bebe【董生活】云朵包真皮单肩斜挎包小众包包女斜挎小包百搭DB</div>
+                          <div class="meta">SPU-100821</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><div class="store-cell"><span class="platform-badge douyin">抖</span><span>抖音</span></div></td>
+                    <td class="num">¥53,119</td>
+                    <td class="num">¥38,525</td>
+                    <td class="num">161<br><span class="meta">¥239.3</span></td>
+                    <td class="num">¥15,084<br><span class="meta refund-high">28.4%</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank silver">2</span></td>
+                    <td>
+                      <div class="product-cell">
+                        <img class="product-image" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23f4f0e6'/%3E%3Cpath d='M42 82 50 36h20l8 46 8 18H34l8-18Z' fill='%23d6cfb8'/%3E%3Cpath d='M49 42c3-13 20-13 22 0' stroke='%23988f79' stroke-width='5' fill='none'/%3E%3C/svg%3E" />
+                        <div class="name-stack">
+                          <div class="name">bebe单肩荔枝纹秋千包真皮包包百搭女头层牛皮春夏小众高级感通勤</div>
+                          <div class="meta">SPU-100644</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><div class="store-cell"><span class="platform-badge douyin">抖</span><span>抖音</span></div></td>
+                    <td class="num">¥15,756</td>
+                    <td class="num">¥10,204</td>
+                    <td class="num">34<br><span class="meta">¥300.1</span></td>
+                    <td class="num">¥5,547<br><span class="meta refund-high">35.2%</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank bronze">3</span></td>
+                    <td>
+                      <div class="product-cell">
+                        <img class="product-image" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23e8eef5'/%3E%3Cpath d='M30 84h62l-8 17H38l-8-17Z' fill='%23d8d2c8'/%3E%3Cpath d='M46 32h15l13 52H34l12-52Z' fill='%23a7c5dc'/%3E%3Cpath d='M69 42h13l6 42H69V42Z' fill='%23f3e8cc'/%3E%3C/svg%3E" />
+                        <div class="name-stack">
+                          <div class="name">雨伞（随机色）</div>
+                          <div class="meta">SPU-200115</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><div class="store-cell"><span class="platform-badge tmall">猫</span><span>天猫</span></div></td>
+                    <td class="num">¥5,189</td>
+                    <td class="num">¥3,910</td>
+                    <td class="num">11<br><span class="meta">¥355.5</span></td>
+                    <td class="num">¥939<br><span class="meta">18.1%</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank">4</span></td>
+                    <td>
+                      <div class="product-cell">
+                        <img class="product-image" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23f3f1e9'/%3E%3Cpath d='M35 78c5-21 13-31 25-31s20 10 25 31l4 18H31l4-18Z' fill='%23e2deca'/%3E%3Cpath d='M49 52c3-12 19-12 22 0' stroke='%239f987e' stroke-width='5' fill='none'/%3E%3C/svg%3E" />
+                        <div class="name-stack">
+                          <div class="name">bebe荔枝纹水桶手提包包轻奢真皮中号女包百搭气质女包高级感</div>
+                          <div class="meta">SPU-100711</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><div class="store-cell"><span class="platform-badge douyin">抖</span><span>抖音</span></div></td>
+                    <td class="num">¥2,849</td>
+                    <td class="num">¥2,136</td>
+                    <td class="num">11<br><span class="meta">¥194.2</span></td>
+                    <td class="num">¥712<br><span class="meta">25.0%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const exportTemplates = {
+      store: {
+        filename: "店铺销售排行导出模板.csv",
+        rows: [
+          ["日期", "平台", "店铺名称", "GMV", "实付金额", "净销售额", "支付订单数", "客单价", "支付件数", "件单价", "退款金额", "退款率", "推广金额", "销售占比"],
+          ["2026-06-10", "抖音", "bebe女包旗舰店", "76910", "52986", "29880", "220", "240.8", "266", "199.2", "23106", "30.0%", "8920", "91.14%"]
+        ]
+      },
+      product: {
+        filename: "商品销售排行导出模板.csv",
+        rows: [
+          ["日期", "平台", "商品ID", "商品名称", "GMV", "实付金额", "支付件数", "件单价", "退款金额", "退款率"],
+          ["2026-06-10", "抖音", "SPU-100821", "bebe【董生活】云朵包真皮单肩斜挎包小众包包女斜挎小包百搭DB", "53119", "38525", "161", "239.3", "15084", "28.4%"]
+        ]
+      }
+    };
+
+    function toCsv(rows) {
+      return rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
+    }
+
+    document.querySelectorAll("[data-download]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const template = exportTemplates[button.dataset.download];
+        if (!template) return;
+        const blob = new Blob(["\ufeff" + toCsv(template.rows)], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = template.filename;
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+  </script>
+</body>
+</html>
