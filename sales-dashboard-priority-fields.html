@@ -743,18 +743,19 @@
 
               <div class="hero-stats">
                 <article class="stat-tile">
-                  <div class="stat-label">支付订单数</div>
-                  <div class="stat-value">243</div>
-                  <div class="stat-sub">客单价 ¥239.1</div>
-                </article>
-                <article class="stat-tile">
                   <div class="stat-label">净销售额</div>
                   <div class="stat-value">¥31,796.1</div>
+                  <div class="stat-sub"><span class="pill success">环比 +4.7%</span></div>
                 </article>
                 <article class="stat-tile">
                   <div class="stat-label">推广金额</div>
                   <div class="stat-value">¥9,860.0</div>
                   <div class="stat-sub">费比 31.01%</div>
+                </article>
+                <article class="stat-tile">
+                  <div class="stat-label">支付订单数</div>
+                  <div class="stat-value">243</div>
+                  <div class="stat-sub">客单价 ¥239.1</div>
                 </article>
               </div>
             </div>
@@ -795,13 +796,13 @@
             <div class="panel-title">渠道经营拆分</div>
             <div class="panel-actions">
               <button class="export-btn" data-download="channel">导出</button>
-              <div class="tabs"><button class="active">按平台</button><button>按场景</button></div>
             </div>
           </div>
           <div class="table-scroll">
             <table class="breakdown-table">
               <colgroup>
                 <col style="width: 120px" />
+                <col style="width: 130px" />
                 <col style="width: 120px" />
                 <col style="width: 120px" />
                 <col style="width: 120px" />
@@ -812,6 +813,7 @@
               <thead>
                 <tr>
                   <th>平台</th>
+                  <th>经营类型</th>
                   <th>场景</th>
                   <th class="num">GMV</th>
                   <th class="num">净销售额</th>
@@ -823,6 +825,7 @@
               <tbody>
                 <tr>
                   <td class="dimension-cell">抖音合计</td>
+                  <td>全部</td>
                   <td><span class="scene-tag">全部</span></td>
                   <td class="num">¥52,986</td>
                   <td class="num">¥29,880</td>
@@ -832,33 +835,87 @@
                 </tr>
                 <tr>
                   <td></td>
-                  <td><span class="scene-tag live">直播间</span></td>
-                  <td class="num">¥37,000</td>
-                  <td class="num">¥20,690</td>
-                  <td class="num">31.2%</td>
-                  <td class="num">¥5,800</td>
+                  <td class="dimension-cell">自营</td>
+                  <td><span class="scene-tag">合计</span></td>
+                  <td class="num">¥42,420</td>
+                  <td class="num">¥24,250</td>
+                  <td class="num">28.9%</td>
+                  <td class="num">¥6,800</td>
                   <td class="num">28.0%</td>
                 </tr>
                 <tr>
                   <td></td>
+                  <td class="sub-dimension">自营</td>
+                  <td><span class="scene-tag live">直播间</span></td>
+                  <td class="num">¥29,460</td>
+                  <td class="num">¥16,780</td>
+                  <td class="num">31.2%</td>
+                  <td class="num">¥4,280</td>
+                  <td class="num">25.5%</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="sub-dimension">自营</td>
                   <td><span class="scene-tag card">商品卡</span></td>
-                  <td class="num">¥15,986</td>
-                  <td class="num">¥9,190</td>
+                  <td class="num">¥12,960</td>
+                  <td class="num">¥7,470</td>
                   <td class="num">23.6%</td>
-                  <td class="num">¥3,120</td>
-                  <td class="num">34.0%</td>
+                  <td class="num">¥2,520</td>
+                  <td class="num">33.7%</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="dimension-cell">达人</td>
+                  <td><span class="scene-tag">合计</span></td>
+                  <td class="num">¥10,566</td>
+                  <td class="num">¥5,630</td>
+                  <td class="num">34.4%</td>
+                  <td class="num">¥2,120</td>
+                  <td class="num">37.7%</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="sub-dimension">达人</td>
+                  <td><span class="scene-tag live">直播间</span></td>
+                  <td class="num">¥6,940</td>
+                  <td class="num">¥3,720</td>
+                  <td class="num">36.0%</td>
+                  <td class="num">¥1,360</td>
+                  <td class="num">36.6%</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="sub-dimension">达人</td>
+                  <td><span class="scene-tag card">商品卡</span></td>
+                  <td class="num">¥3,626</td>
+                  <td class="num">¥1,910</td>
+                  <td class="num">31.5%</td>
+                  <td class="num">¥760</td>
+                  <td class="num">39.8%</td>
                 </tr>
                 <tr>
                   <td class="dimension-cell">淘宝</td>
+                  <td>自营</td>
                   <td><span class="scene-tag">整体</span></td>
-                  <td class="num">¥3,848.0</td>
-                  <td class="num">¥1,271.4</td>
-                  <td class="num refund-high">43.5%</td>
-                  <td class="num">¥620</td>
-                  <td class="num">48.8%</td>
+                  <td class="num">¥2,894.0</td>
+                  <td class="num">¥940.0</td>
+                  <td class="num refund-high">41.2%</td>
+                  <td class="num">¥420</td>
+                  <td class="num">44.7%</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>达人</td>
+                  <td><span class="scene-tag">整体</span></td>
+                  <td class="num">¥954.0</td>
+                  <td class="num">¥331.4</td>
+                  <td class="num refund-high">47.4%</td>
+                  <td class="num">¥200</td>
+                  <td class="num">60.4%</td>
                 </tr>
                 <tr>
                   <td class="dimension-cell">天猫</td>
+                  <td>自营</td>
                   <td><span class="scene-tag">整体</span></td>
                   <td class="num">¥1,259.2</td>
                   <td class="num">¥644.7</td>
@@ -867,7 +924,28 @@
                   <td class="num">49.6%</td>
                 </tr>
                 <tr>
+                  <td></td>
+                  <td>达人</td>
+                  <td><span class="scene-tag">整体</span></td>
+                  <td class="num">¥0</td>
+                  <td class="num">¥0</td>
+                  <td class="num">-</td>
+                  <td class="num">¥0</td>
+                  <td class="num">-</td>
+                </tr>
+                <tr>
                   <td class="dimension-cell">视频号</td>
+                  <td>自营</td>
+                  <td><span class="scene-tag">整体</span></td>
+                  <td class="num">¥0</td>
+                  <td class="num">¥0</td>
+                  <td class="num">-</td>
+                  <td class="num">¥0</td>
+                  <td class="num">-</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>达人</td>
                   <td><span class="scene-tag">整体</span></td>
                   <td class="num">¥0</td>
                   <td class="num">¥0</td>
@@ -877,6 +955,7 @@
                 </tr>
                 <tr class="total-row">
                   <td>总计</td>
+                  <td>全部</td>
                   <td>全部</td>
                   <td class="num">¥58,093.2</td>
                   <td class="num">¥31,796.1</td>
@@ -1106,8 +1185,8 @@
       channel: {
         filename: "渠道经营拆分导出模板.csv",
         rows: [
-          ["日期", "平台", "场景", "GMV", "净销售额", "退款率", "推广金额", "推广费比"],
-          ["2026-06-10", "抖音", "直播间", "37000", "20690", "31.2%", "5800", "28.0%"]
+          ["日期", "平台", "经营类型", "场景", "GMV", "净销售额", "退款率", "推广金额", "推广费比"],
+          ["2026-06-10", "抖音", "自营", "直播间", "29460", "16780", "31.2%", "4280", "25.5%"]
         ]
       }
     };
