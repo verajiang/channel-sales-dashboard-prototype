@@ -371,7 +371,7 @@
 
     .metric-strip {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       border-top: 1px solid var(--line);
     }
 
@@ -772,6 +772,21 @@
                 <div class="inline-meta"><span class="pill danger">退款率 31.16%</span></div>
               </div>
               <div class="strip-item">
+                <div class="strip-label">发货前退款率</div>
+                <div class="strip-value">18.72%</div>
+                <div class="inline-meta">发货前退款金额 / GMV</div>
+              </div>
+              <div class="strip-item">
+                <div class="strip-label">发货后退款率</div>
+                <div class="strip-value">12.44%</div>
+                <div class="inline-meta">发货后退款金额 / GMV</div>
+              </div>
+              <div class="strip-item">
+                <div class="strip-label">预售金额占比</div>
+                <div class="strip-value">21.8%</div>
+                <div class="inline-meta">预售GMV / GMV</div>
+              </div>
+              <div class="strip-item">
                 <div class="strip-label">订单连带率</div>
                 <div class="strip-value">1.24</div>
                 <div class="inline-meta">支付件数 / 支付订单</div>
@@ -1036,7 +1051,7 @@
                     <td class="num">¥29,880</td>
                     <td class="num">220<br><span class="meta">¥240.8</span></td>
                     <td class="num">266<br><span class="meta">¥199.2</span></td>
-                    <td class="num">¥23,106<br><span class="meta refund-high">30.0%</span></td>
+                    <td class="num">¥23,106<br><span class="meta refund-high">30.0%</span><br><span class="meta">发前 18.0% / 发后 12.0%</span></td>
                     <td class="num">¥8,920<br><span class="meta">费比 29.9%</span></td>
                     <td class="num">91.14%</td>
                   </tr>
@@ -1047,7 +1062,7 @@
                     <td class="num">¥1,271.4</td>
                     <td class="num">17<br><span class="meta">¥226.4</span></td>
                     <td class="num">29<br><span class="meta">¥132.7</span></td>
-                    <td class="num">¥2,576.6<br><span class="meta refund-high">43.5%</span></td>
+                    <td class="num">¥2,576.6<br><span class="meta refund-high">43.5%</span><br><span class="meta">发前 27.0% / 发后 16.5%</span></td>
                     <td class="num">¥620<br><span class="meta">费比 48.8%</span></td>
                     <td class="num">6.99%</td>
                   </tr>
@@ -1058,7 +1073,7 @@
                     <td class="num">¥644.7</td>
                     <td class="num">6<br><span class="meta">¥209.9</span></td>
                     <td class="num">6<br><span class="meta">¥209.9</span></td>
-                    <td class="num">¥350.0<br><span class="meta">22.1%</span></td>
+                    <td class="num">¥350.0<br><span class="meta">22.1%</span><br><span class="meta">发前 13.2% / 发后 8.9%</span></td>
                     <td class="num">¥320<br><span class="meta">费比 49.6%</span></td>
                     <td class="num">1.88%</td>
                   </tr>
@@ -1069,7 +1084,7 @@
                     <td class="num">¥0</td>
                     <td class="num">0<br><span class="meta">-</span></td>
                     <td class="num">0<br><span class="meta">-</span></td>
-                    <td class="num">¥0<br><span class="meta">-</span></td>
+                    <td class="num">¥0<br><span class="meta">-</span><br><span class="meta">发前 - / 发后 -</span></td>
                     <td class="num">¥0</td>
                     <td class="num">0.00%</td>
                   </tr>
@@ -1190,8 +1205,8 @@
       store: {
         filename: "店铺销售排行导出模板.csv",
         rows: [
-          ["日期", "平台", "店铺名称", "GMV", "净销售额", "支付订单数", "客单价", "支付件数", "件单价", "退款金额", "退款率", "推广金额", "推广费比", "销售占比"],
-          ["2026-06-10", "抖音", "bebe女包旗舰店", "52986", "29880", "220", "240.8", "266", "199.2", "23106", "30.0%", "8920", "29.9%", "91.14%"]
+          ["日期", "平台", "店铺名称", "GMV", "净销售额", "支付订单数", "客单价", "支付件数", "件单价", "退款金额", "退款率", "发货前退款率", "发货后退款率", "推广金额", "推广费比", "销售占比"],
+          ["2026-06-10", "抖音", "bebe女包旗舰店", "52986", "29880", "220", "240.8", "266", "199.2", "23106", "30.0%", "18.0%", "12.0%", "8920", "29.9%", "91.14%"]
         ]
       },
       product: {
