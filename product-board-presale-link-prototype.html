@@ -672,6 +672,11 @@
               <col style="width: 140px" />
               <col style="width: 110px" />
               <col style="width: 110px" />
+              <col style="width: 110px" />
+              <col style="width: 110px" />
+              <col style="width: 110px" />
+              <col style="width: 110px" />
+              <col style="width: 110px" />
             </colgroup>
             <thead>
               <tr>
@@ -680,8 +685,8 @@
                 <th class="group" colspan="3">预售数据</th>
                 <th class="group" colspan="3">现货数据</th>
                 <th class="group" rowspan="2">现货预售占比</th>
-                <th class="group" rowspan="2">售前退款率</th>
-                <th class="group" rowspan="2">现货库存</th>
+                <th class="group" colspan="5">退款数据</th>
+                <th class="group" colspan="2">库存数据</th>
               </tr>
               <tr>
                 <th class="sub num">销售金额</th>
@@ -694,6 +699,13 @@
                 <th class="sub num">现货GMV</th>
                 <th class="sub num">现货实付</th>
                 <th class="sub num">现货件数</th>
+                <th class="sub num">总退款率</th>
+                <th class="sub num">售前退款率</th>
+                <th class="sub num">售后退款率</th>
+                <th class="sub num">现货退款率</th>
+                <th class="sub num">预售退款率</th>
+                <th class="sub num">现货库存</th>
+                <th class="sub num">采购在途</th>
               </tr>
             </thead>
             <tbody>
@@ -720,8 +732,13 @@
                 <td class="num">¥935,805.74</td>
                 <td class="num">2,624</td>
                 <td class="num ratio">现货 67.2% / 预售 32.8%</td>
+                <td class="num">60.66%</td>
                 <td class="num">46.36%</td>
+                <td class="num">14.3%</td>
+                <td class="num">22.22%</td>
+                <td class="num">38.44%</td>
                 <td class="num">12,232</td>
+                <td class="num">4,365</td>
               </tr>
 
               <tr>
@@ -748,8 +765,13 @@
                 <td class="num">¥227,360</td>
                 <td class="num">448</td>
                 <td class="num ratio">现货 73.5% / 预售 26.5%</td>
+                <td class="num">62.51%</td>
                 <td class="num">47.2%</td>
+                <td class="num">15.31%</td>
+                <td class="num">8.4%</td>
+                <td class="num">54.11%</td>
                 <td class="num">418</td>
+                <td class="num">1,962</td>
               </tr>
               <tr class="detail-row hidden" id="link-1-detail">
                 <td class="sticky-link detail-link"><span class="channel-pill self">自营</span></td>
@@ -764,8 +786,13 @@
                 <td class="num">¥187,910</td>
                 <td class="num">368</td>
                 <td class="num">现货 74.1% / 预售 25.9%</td>
+                <td class="num">56.8%</td>
                 <td class="num">44.6%</td>
+                <td class="num">12.2%</td>
+                <td class="num">8.8%</td>
+                <td class="num">48.0%</td>
                 <td class="num">418</td>
+                <td class="num">1,530</td>
               </tr>
               <tr class="detail-row hidden" data-parent="link-1-detail">
                 <td class="sticky-link detail-link"><span class="channel-pill creator">达人</span></td>
@@ -780,8 +807,13 @@
                 <td class="num">¥39,450</td>
                 <td class="num">80</td>
                 <td class="num">现货 70.6% / 预售 29.4%</td>
+                <td class="num">74.3%</td>
                 <td class="num">58.1%</td>
+                <td class="num">16.2%</td>
+                <td class="num">6.9%</td>
+                <td class="num">67.4%</td>
                 <td class="num">0</td>
+                <td class="num">432</td>
               </tr>
 
               <tr>
@@ -808,8 +840,13 @@
                 <td class="num">¥92,878</td>
                 <td class="num">272</td>
                 <td class="num ratio">现货 57.0% / 预售 43.0%</td>
+                <td class="num">64.46%</td>
                 <td class="num">45.4%</td>
+                <td class="num">19.06%</td>
+                <td class="num">12.68%</td>
+                <td class="num">51.78%</td>
                 <td class="num">611</td>
+                <td class="num">5</td>
               </tr>
               <tr class="detail-row hidden" id="link-2-detail">
                 <td class="sticky-link detail-link"><span class="channel-pill self">自营</span></td>
@@ -824,8 +861,13 @@
                 <td class="num">¥10,310</td>
                 <td class="num">31</td>
                 <td class="num">现货 75.8% / 预售 24.2%</td>
+                <td class="num">38.2%</td>
                 <td class="num">31.0%</td>
+                <td class="num">7.2%</td>
+                <td class="num">9.1%</td>
+                <td class="num">29.1%</td>
                 <td class="num">611</td>
+                <td class="num">0</td>
               </tr>
               <tr class="detail-row hidden" data-parent="link-2-detail">
                 <td class="sticky-link detail-link"><span class="channel-pill creator">达人</span></td>
@@ -840,8 +882,13 @@
                 <td class="num">¥82,568</td>
                 <td class="num">241</td>
                 <td class="num">现货 55.3% / 预售 44.7%</td>
+                <td class="num">66.9%</td>
                 <td class="num">46.7%</td>
+                <td class="num">20.2%</td>
+                <td class="num">13.0%</td>
+                <td class="num">53.9%</td>
                 <td class="num">0</td>
+                <td class="num">5</td>
               </tr>
 
               <tr>
@@ -868,8 +915,13 @@
                 <td class="num">¥70,944</td>
                 <td class="num">282</td>
                 <td class="num ratio">现货 80.1% / 预售 19.9%</td>
+                <td class="num">35.0%</td>
                 <td class="num">30.9%</td>
+                <td class="num">4.1%</td>
+                <td class="num">28.98%</td>
+                <td class="num">6.02%</td>
                 <td class="num">379</td>
+                <td class="num">0</td>
               </tr>
               <tr class="detail-row hidden" id="link-3-detail">
                 <td class="sticky-link detail-link"><span class="channel-pill self">自营</span></td>
@@ -884,8 +936,13 @@
                 <td class="num">¥52,160</td>
                 <td class="num">209</td>
                 <td class="num">现货 80.5% / 预售 19.5%</td>
+                <td class="num">31.6%</td>
                 <td class="num">28.8%</td>
+                <td class="num">2.8%</td>
+                <td class="num">26.4%</td>
+                <td class="num">5.2%</td>
                 <td class="num">379</td>
+                <td class="num">0</td>
               </tr>
               <tr class="detail-row hidden" data-parent="link-3-detail">
                 <td class="sticky-link detail-link"><span class="channel-pill creator">达人</span></td>
@@ -900,7 +957,12 @@
                 <td class="num">¥18,784</td>
                 <td class="num">73</td>
                 <td class="num">现货 79.1% / 预售 20.9%</td>
+                <td class="num">42.9%</td>
                 <td class="num">36.4%</td>
+                <td class="num">6.5%</td>
+                <td class="num">35.8%</td>
+                <td class="num">7.1%</td>
+                <td class="num">0</td>
                 <td class="num">0</td>
               </tr>
             </tbody>
