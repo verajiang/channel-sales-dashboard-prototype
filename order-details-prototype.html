@@ -503,6 +503,39 @@
       font-weight: 750;
     }
 
+    .field-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 4px;
+      outline: none;
+      cursor: help;
+    }
+
+    .field-header:focus-visible {
+      box-shadow: 0 0 0 3px rgba(84, 88, 232, .13);
+    }
+
+    .field-help {
+      width: 14px;
+      height: 14px;
+      border: 1px solid #aeb5c3;
+      border-radius: 50%;
+      color: #8c94a4;
+      display: inline-grid;
+      place-items: center;
+      font-size: 9px;
+      font-style: normal;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .field-header:hover .field-help,
+    .field-header:focus-visible .field-help {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
     th:first-child,
     td:first-child {
       position: sticky;
@@ -852,6 +885,30 @@
       font-size: 12px;
     }
 
+    .field-tooltip {
+      position: fixed;
+      z-index: 120;
+      width: max-content;
+      max-width: 300px;
+      padding: 10px 12px;
+      border: 1px solid rgba(45, 51, 68, .08);
+      border-radius: 7px;
+      background: #292e3b;
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(28, 33, 47, .2);
+      font-size: 12px;
+      line-height: 1.6;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .14s ease, transform .14s ease;
+    }
+
+    .field-tooltip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .toast.show {
       opacity: 1;
       transform: translate(-50%, 0);
@@ -1157,41 +1214,42 @@
   </section>
 
   <div id="toast" class="toast"></div>
+  <div id="fieldTooltip" class="field-tooltip" role="tooltip"></div>
 
   <script>
     const fields = [
-      { key: "date", label: "日期", group: "订单信息", width: 110 },
-      { key: "orderNo", label: "线上订单编号", group: "订单信息", width: 180 },
-      { key: "orderType", label: "订单类别", group: "订单信息", width: 95 },
-      { key: "status", label: "订单状态", group: "订单信息", width: 100 },
-      { key: "platform", label: "平台渠道", group: "渠道与店铺", width: 120 },
-      { key: "store", label: "店铺名称", group: "渠道与店铺", width: 240 },
-      { key: "source", label: "订单渠道来源", group: "渠道与店铺", width: 120 },
-      { key: "creator", label: "达人", group: "渠道与店铺", width: 120 },
-      { key: "spu", label: "SPU", group: "商品信息", width: 105 },
-      { key: "color", label: "颜色", group: "商品信息", width: 100 },
-      { key: "size", label: "尺码", group: "商品信息", width: 80 },
-      { key: "sku", label: "SKU", group: "商品信息", width: 190 },
-      { key: "tag", label: "商品标签", group: "商品信息", width: 110 },
-      { key: "category", label: "商品类目", group: "商品信息", width: 100 },
-      { key: "productName", label: "商品名称", group: "商品信息", width: 230 },
-      { key: "basePrice", label: "基础售价", group: "价格与销售", width: 105, money: true },
-      { key: "costPrice", label: "成本价格", group: "价格与销售", width: 105, money: true },
-      { key: "discountPrice", label: "店铺优惠价", group: "价格与销售", width: 110, money: true },
-      { key: "storePrice", label: "店铺售价", group: "价格与销售", width: 105, money: true },
-      { key: "dealPrice", label: "成交价", group: "价格与销售", width: 100, money: true },
-      { key: "payableAmount", label: "应付金额", group: "价格与销售", width: 110, money: true },
-      { key: "payableQty", label: "应付数量", group: "价格与销售", width: 100 },
-      { key: "paidAmount", label: "实付金额", group: "价格与销售", width: 110, money: true },
-      { key: "paidQty", label: "实付数量", group: "价格与销售", width: 100 },
-      { key: "platformDiscount", label: "订单优惠平台承担部分", group: "价格与销售", width: 170, money: true },
-      { key: "salesCost", label: "销售成本", group: "价格与销售", width: 105, money: true },
-      { key: "shippedQty", label: "实发数量", group: "履约与售后", width: 100 },
-      { key: "shippedAmount", label: "实发金额", group: "履约与售后", width: 110, money: true },
-      { key: "returnQty", label: "退货数量", group: "履约与售后", width: 100 },
-      { key: "returnAmount", label: "退货金额", group: "履约与售后", width: 110, money: true },
-      { key: "preRefundQty", label: "发货前退款数量", group: "履约与售后", width: 130 },
-      { key: "preRefundAmount", label: "发货前退款金额", group: "履约与售后", width: 140, money: true }
+      { key: "date", label: "日期", description: "付款日期或订单日期，用于按时间范围筛选订单。", group: "订单信息", width: 110 },
+      { key: "orderNo", label: "线上订单编号", description: "平台订单编号或子订单编号，用于定位具体订单。", group: "订单信息", width: 180 },
+      { key: "orderType", label: "订单类别", description: "区分销售单和退货单。", group: "订单信息", width: 95 },
+      { key: "status", label: "订单状态", description: "订单当前状态，如已完成、待付款、已退货、交易关闭等。", group: "订单信息", width: 100 },
+      { key: "platform", label: "平台渠道", description: "订单数据所属的平台渠道。", group: "渠道与店铺", width: 120 },
+      { key: "store", label: "店铺名称", description: "订单所属的平台店铺名称。", group: "渠道与店铺", width: 240 },
+      { key: "source", label: "订单渠道来源", description: "订单的渠道来源，可对应 DP 系统 SKU 日报中的来源筛选。", group: "渠道与店铺", width: 120 },
+      { key: "creator", label: "达人", description: "订单关联的分销达人，来源于分销数据。", group: "渠道与店铺", width: 120 },
+      { key: "spu", label: "SPU", description: "商品资料中的标准产品单元编码。", group: "商品信息", width: 105 },
+      { key: "color", label: "颜色", description: "商品资料中维护的颜色规格。", group: "商品信息", width: 100 },
+      { key: "size", label: "尺码", description: "商品资料中维护的尺码或尺寸规格。", group: "商品信息", width: 80 },
+      { key: "sku", label: "SKU", description: "商品资料中的最小库存单元编码。", group: "商品信息", width: 190 },
+      { key: "tag", label: "商品标签", description: "商品资料中维护的业务标签，如在售产品、赠品、配件等。", group: "商品信息", width: 110 },
+      { key: "category", label: "商品类目", description: "商品资料中维护的类目归属。", group: "商品信息", width: 100 },
+      { key: "productName", label: "商品名称", description: "商品资料中维护的商品名称。", group: "商品信息", width: 230 },
+      { key: "basePrice", label: "基础售价", description: "商品资料中维护的基础销售价格。", group: "价格与销售", width: 105, money: true },
+      { key: "costPrice", label: "成本价格", description: "商品资料中维护的商品成本价格。", group: "价格与销售", width: 105, money: true },
+      { key: "discountPrice", label: "店铺优惠价", description: "平台店铺价格中的优惠价格字段。", group: "价格与销售", width: 110, money: true },
+      { key: "storePrice", label: "店铺售价", description: "基础售价扣除店铺优惠后的店铺售价。", group: "价格与销售", width: 105, money: true },
+      { key: "dealPrice", label: "成交价", description: "消费者使用优惠后的最终成交单价。", group: "价格与销售", width: 100, money: true },
+      { key: "payableAmount", label: "应付金额", description: "订单应付金额；当前原型按成交价乘以应付数量展示。", group: "价格与销售", width: 110, money: true },
+      { key: "payableQty", label: "应付数量", description: "订单中应付的商品数量。", group: "价格与销售", width: 100 },
+      { key: "paidAmount", label: "实付金额", description: "订单实际支付金额；未完成支付的订单为 0。", group: "价格与销售", width: 110, money: true },
+      { key: "paidQty", label: "实付数量", description: "订单中已完成支付的商品数量；未完成支付的订单为 0。", group: "价格与销售", width: 100 },
+      { key: "platformDiscount", label: "订单优惠平台承担部分", description: "订单优惠中由平台承担的金额，DP 系统 SKU 日报已有对应字段。", group: "价格与销售", width: 170, money: true },
+      { key: "salesCost", label: "销售成本", description: "订单对应的销售成本金额，来源于销售基础数据。", group: "价格与销售", width: 105, money: true },
+      { key: "shippedQty", label: "实发数量", description: "订单实际发出的商品数量，来源于销售基础数据。", group: "履约与售后", width: 100 },
+      { key: "shippedAmount", label: "实发金额", description: "订单实际发货对应的金额，来源于销售基础数据。", group: "履约与售后", width: 110, money: true },
+      { key: "returnQty", label: "退货数量", description: "订单发生退货的商品数量，来源于销售基础数据。", group: "履约与售后", width: 100 },
+      { key: "returnAmount", label: "退货金额", description: "订单发生退货对应的金额，来源于销售基础数据。", group: "履约与售后", width: 110, money: true },
+      { key: "preRefundQty", label: "发货前退款数量", description: "订单发货前完成退款的商品数量，DP 系统 SKU 日报已有对应字段。", group: "履约与售后", width: 130 },
+      { key: "preRefundAmount", label: "发货前退款金额", description: "订单发货前完成退款对应的金额，DP 系统 SKU 日报已有对应字段。", group: "履约与售后", width: 140, money: true }
     ];
 
     const defaultKeys = [
@@ -1258,6 +1316,11 @@
 
     const $ = (id) => document.getElementById(id);
     const money = (value) => `¥${Number(value || 0).toLocaleString("zh-CN", { minimumFractionDigits: 2 })}`;
+    const escapeAttribute = (value) => String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
 
     function statusTag(status) {
       const classMap = { "已完成": "success", "待发货": "warning", "已退货": "danger", "交易关闭": "" };
@@ -1280,7 +1343,11 @@
     function renderTable() {
       const activeFields = selectedKeys.map(key => fields.find(field => field.key === key)).filter(Boolean);
       $("tableHead").innerHTML = activeFields.map(field =>
-        `<th style="width:${field.width}px;${field.money ? "text-align:right" : ""}">${field.label}</th>`
+        `<th style="width:${field.width}px;${field.money ? "text-align:right" : ""}">
+          <span class="field-header hover-field" tabindex="0" data-description="${escapeAttribute(field.description)}" aria-describedby="fieldTooltip">
+            ${field.label}<i class="field-help" aria-hidden="true">?</i>
+          </span>
+        </th>`
       ).join("");
 
       if (!filteredOrders.length) {
@@ -1314,7 +1381,9 @@
           ${groupFields.map(field => `
             <label class="column-item">
               <input type="checkbox" value="${field.key}" ${draftKeys.includes(field.key) ? "checked" : ""} />
-              <span>${field.label}</span>
+              <span class="field-header hover-field" tabindex="0" data-description="${escapeAttribute(field.description)}" aria-describedby="fieldTooltip">
+                ${field.label}<i class="field-help" aria-hidden="true">?</i>
+              </span>
               <span class="field-mark">${field.money ? "金额" : "字段"}</span>
             </label>
           `).join("")}
@@ -1421,6 +1490,62 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => $("toast").classList.remove("show"), 2200);
     }
+
+    let activeFieldTarget = null;
+
+    function showFieldTooltip(target) {
+      const description = target.dataset.description;
+      if (!description) return;
+
+      activeFieldTarget = target;
+      const tooltip = $("fieldTooltip");
+      tooltip.textContent = description;
+      tooltip.classList.add("show");
+
+      const targetRect = target.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const viewportGap = 12;
+      let left = targetRect.left + targetRect.width / 2 - tooltipRect.width / 2;
+      left = Math.max(viewportGap, Math.min(left, window.innerWidth - tooltipRect.width - viewportGap));
+
+      let top = targetRect.bottom + 9;
+      if (top + tooltipRect.height > window.innerHeight - viewportGap) {
+        top = targetRect.top - tooltipRect.height - 9;
+      }
+
+      tooltip.style.left = `${Math.round(left)}px`;
+      tooltip.style.top = `${Math.round(top)}px`;
+    }
+
+    function hideFieldTooltip(target) {
+      if (target && activeFieldTarget !== target) return;
+      activeFieldTarget = null;
+      $("fieldTooltip").classList.remove("show");
+    }
+
+    document.addEventListener("pointerover", event => {
+      const target = event.target.closest?.(".hover-field");
+      if (target && target !== activeFieldTarget) showFieldTooltip(target);
+    });
+
+    document.addEventListener("pointerout", event => {
+      const target = event.target.closest?.(".hover-field");
+      if (!target || target.contains(event.relatedTarget)) return;
+      hideFieldTooltip(target);
+    });
+
+    document.addEventListener("focusin", event => {
+      const target = event.target.closest?.(".hover-field");
+      if (target) showFieldTooltip(target);
+    });
+
+    document.addEventListener("focusout", event => {
+      const target = event.target.closest?.(".hover-field");
+      if (target) hideFieldTooltip(target);
+    });
+
+    window.addEventListener("scroll", () => hideFieldTooltip(), true);
+    window.addEventListener("resize", () => hideFieldTooltip());
 
     $("advancedToggle").addEventListener("click", () => {
       const isShown = $("advancedFilters").classList.toggle("show");
