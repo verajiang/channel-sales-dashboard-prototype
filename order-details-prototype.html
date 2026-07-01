@@ -1,0 +1,1473 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>万象后台 · 订单明细</title>
+  <style>
+    :root {
+      --page: #f3f5f9;
+      --surface: #ffffff;
+      --surface-soft: #f7f8fb;
+      --line: #e5e9f1;
+      --line-strong: #d4d9e5;
+      --ink: #242936;
+      --muted: #727b8e;
+      --faint: #a1a8b7;
+      --primary: #5458e8;
+      --primary-deep: #3f43ca;
+      --primary-soft: #eef0ff;
+      --success: #138a61;
+      --success-soft: #eaf8f2;
+      --warning: #d97b16;
+      --warning-soft: #fff5e8;
+      --danger: #d64d62;
+      --danger-soft: #fff0f3;
+      --sidebar: 76px;
+      --shadow: 0 14px 36px rgba(39, 44, 65, 0.09);
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: light; }
+
+    body {
+      margin: 0;
+      min-width: 1180px;
+      color: var(--ink);
+      background: var(--page);
+      font-family: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+    }
+
+    button,
+    input,
+    select { font: inherit; }
+
+    button { color: inherit; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: var(--sidebar) minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--line);
+      padding: 20px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      width: 46px;
+      height: 40px;
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .logo i {
+      position: absolute;
+      top: 3px;
+      width: 10px;
+      height: 34px;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #7667f5, #476eea);
+      transform: rotate(-28deg);
+      box-shadow: 0 5px 10px rgba(79, 87, 226, 0.18);
+    }
+
+    .logo i:nth-child(1) { left: 3px; }
+    .logo i:nth-child(2) { left: 18px; }
+    .logo i:nth-child(3) { left: 34px; height: 20px; }
+
+    .nav-list {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+      padding: 0 10px;
+    }
+
+    .nav-item {
+      position: relative;
+      height: 52px;
+      border: 0;
+      border-radius: 10px;
+      color: #687185;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .nav-item:hover { background: #f7f8fc; }
+
+    .nav-item.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: -10px;
+      top: 12px;
+      width: 3px;
+      height: 28px;
+      border-radius: 0 4px 4px 0;
+      background: var(--primary);
+    }
+
+    .nav-item svg {
+      width: 21px;
+      height: 21px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-tip {
+      pointer-events: none;
+      position: absolute;
+      left: 58px;
+      top: 50%;
+      z-index: 30;
+      transform: translate(4px, -50%);
+      white-space: nowrap;
+      color: #fff;
+      background: #272c39;
+      border-radius: 6px;
+      padding: 7px 10px;
+      opacity: 0;
+      transition: .15s ease;
+      box-shadow: var(--shadow);
+      font-size: 12px;
+    }
+
+    .nav-item:hover .nav-tip {
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+
+    .sidebar-foot {
+      margin-top: auto;
+      color: var(--muted);
+    }
+
+    .main { min-width: 0; }
+
+    .topbar {
+      height: 66px;
+      padding: 0 28px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand,
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .menu-lines {
+      width: 20px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .menu-lines i {
+      height: 2px;
+      border-radius: 9px;
+      background: #303542;
+    }
+
+    .brand-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    .workspace-chip {
+      height: 30px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--surface-soft);
+      color: #51596b;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .top-action {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #687185;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .top-action:hover { background: #f4f5f9; }
+
+    .top-action svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(145deg, #7bb7f7, #526ae5);
+      font-weight: 800;
+      box-shadow: 0 5px 14px rgba(77, 107, 216, .2);
+    }
+
+    .user-meta { line-height: 1.2; }
+    .user-name { font-size: 13px; font-weight: 750; }
+    .user-role { margin-top: 4px; color: var(--faint); font-size: 11px; }
+
+    .content {
+      padding: 0 28px 36px;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+
+    .page-head {
+      height: 64px;
+      display: flex;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      color: #363c49;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 5px 18px rgba(42, 48, 68, .035);
+    }
+
+    .filter-panel {
+      padding: 20px 20px 14px;
+      margin-bottom: 16px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(190px, 1fr));
+      gap: 14px 18px;
+    }
+
+    .filter-field { min-width: 0; }
+
+    .filter-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #555d6e;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .control,
+    .date-range {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #fff;
+      outline: none;
+      color: #3d4452;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .control {
+      padding: 0 11px;
+    }
+
+    .control::placeholder { color: #a8afbd; }
+
+    .control:focus,
+    .date-range:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(84, 88, 232, .1);
+    }
+
+    select.control {
+      appearance: none;
+      padding-right: 32px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #8991a1 50%),
+        linear-gradient(135deg, #8991a1 50%, transparent 50%);
+      background-position: calc(100% - 16px) 16px, calc(100% - 11px) 16px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    .date-range {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .date-range input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      color: #4d5565;
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .date-range span {
+      padding: 0 7px;
+      color: #a0a8b7;
+    }
+
+    .advanced {
+      display: none;
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .advanced.show { display: block; }
+
+    .filter-footer {
+      min-height: 50px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .filter-note {
+      color: var(--faint);
+      font-size: 12px;
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      height: 36px;
+      padding: 0 15px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #fff;
+      color: #4d5565;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      font-weight: 650;
+      transition: .15s ease;
+    }
+
+    .btn:hover {
+      border-color: #bfc5d3;
+      background: #fafbfc;
+    }
+
+    .btn.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 5px 12px rgba(84, 88, 232, .18);
+    }
+
+    .btn.primary:hover { background: var(--primary-deep); }
+
+    .btn.ghost {
+      border-color: transparent;
+      background: transparent;
+      color: var(--primary);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .table-panel { overflow: hidden; }
+
+    .table-toolbar {
+      min-height: 68px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .result-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .result-title strong { font-size: 15px; }
+    .result-count { color: var(--muted); font-size: 12px; }
+
+    .result-count b { color: var(--primary); }
+
+    .summary-line {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .summary-line em {
+      color: var(--ink);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 9px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-color: #c7ccda #f4f5f8;
+    }
+
+    table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      height: 44px;
+      padding: 0 13px;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid #edf0f5;
+      background: #f7f8fb;
+      color: #5f6778;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+    }
+
+    th:first-child { background: #f7f8fb; }
+
+    td:first-child {
+      background: #fff;
+      box-shadow: 5px 0 9px rgba(36, 41, 54, .03);
+    }
+
+    td {
+      height: 58px;
+      padding: 8px 13px;
+      border-bottom: 1px solid #edf0f5;
+      border-right: 1px solid #f1f3f7;
+      background: #fff;
+      color: #444c5c;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+    }
+
+    tr:hover td { background: #fafaff; }
+    tr:hover td:first-child { background: #fafaff; }
+
+    .link {
+      border: 0;
+      padding: 0;
+      background: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tag {
+      display: inline-flex;
+      min-height: 24px;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 5px;
+      background: #f1f3f7;
+      color: #687185;
+      font-size: 11px;
+    }
+
+    .tag.success { color: var(--success); background: var(--success-soft); }
+    .tag.warning { color: var(--warning); background: var(--warning-soft); }
+    .tag.danger { color: var(--danger); background: var(--danger-soft); }
+    .tag.primary { color: var(--primary-deep); background: var(--primary-soft); }
+
+    .money { text-align: right; font-variant-numeric: tabular-nums; }
+    .positive { color: var(--success); font-weight: 700; }
+    .negative { color: var(--danger); font-weight: 700; }
+    .muted-cell { color: #a2a9b6; }
+
+    .pagination {
+      min-height: 64px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pages {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .page-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .mask {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(29, 33, 44, .32);
+      opacity: 0;
+      visibility: hidden;
+      transition: .2s ease;
+    }
+
+    .mask.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .drawer {
+      position: fixed;
+      z-index: 60;
+      top: 0;
+      right: 0;
+      width: 430px;
+      max-width: 90vw;
+      height: 100vh;
+      background: #fff;
+      box-shadow: -18px 0 42px rgba(26, 31, 47, .16);
+      transform: translateX(102%);
+      transition: transform .25s ease;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+      min-height: 68px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .drawer-title span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      cursor: pointer;
+      color: #7a8292;
+      font-size: 21px;
+    }
+
+    .icon-btn:hover { background: #f3f4f8; }
+
+    .drawer-tools {
+      padding: 15px 20px 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input { padding-left: 34px; }
+
+    .search-box svg {
+      position: absolute;
+      left: 11px;
+      top: 11px;
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: #8d95a5;
+      stroke-width: 2;
+    }
+
+    .tool-row {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .text-btn {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .column-list {
+      overflow-y: auto;
+      padding: 8px 12px 18px;
+    }
+
+    .column-group-label {
+      padding: 15px 10px 7px;
+      color: #949cab;
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .08em;
+    }
+
+    .column-item {
+      min-height: 42px;
+      padding: 0 10px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .column-item:hover { background: #f7f8fb; }
+
+    .column-item input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+    }
+
+    .column-item span { flex: 1; }
+
+    .field-mark {
+      flex: none !important;
+      color: #a4abba;
+      font-size: 11px;
+    }
+
+    .drawer-foot {
+      min-height: 72px;
+      padding: 15px 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 70;
+      left: 50%;
+      top: 50%;
+      width: 460px;
+      max-width: calc(100vw - 40px);
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 24px 70px rgba(27, 32, 47, .22);
+      transform: translate(-50%, -46%) scale(.98);
+      opacity: 0;
+      visibility: hidden;
+      transition: .2s ease;
+    }
+
+    .modal.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-head {
+      padding: 20px 22px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .modal-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .modal-body {
+      padding: 4px 22px 20px;
+    }
+
+    .export-option {
+      margin-top: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      cursor: pointer;
+    }
+
+    .export-option:has(input:checked) {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .export-option input {
+      margin-top: 2px;
+      accent-color: var(--primary);
+    }
+
+    .export-option strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .export-option span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .modal-foot {
+      padding: 14px 22px 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 22px;
+      z-index: 100;
+      padding: 11px 15px;
+      border-radius: 8px;
+      background: #282d3a;
+      color: #fff;
+      transform: translate(-50%, -18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      box-shadow: var(--shadow);
+      font-size: 12px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .empty {
+      padding: 64px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 1380px) {
+      .filter-grid { grid-template-columns: repeat(3, minmax(190px, 1fr)); }
+      .content { padding-left: 22px; padding-right: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="一级导航">
+      <div class="logo" aria-label="万象"><i></i><i></i><i></i></div>
+      <nav class="nav-list">
+        <button class="nav-item" aria-label="经营概览">
+          <svg viewBox="0 0 24 24"><path d="M4 19V9m6 10V5m6 14v-7m4 7H2"/></svg>
+          <span class="nav-tip">经营概览</span>
+        </button>
+        <button class="nav-item" aria-label="销售分析">
+          <svg viewBox="0 0 24 24"><path d="M4 15l4-4 4 3 7-8"/><path d="M15 6h4v4"/></svg>
+          <span class="nav-tip">销售分析</span>
+        </button>
+        <button class="nav-item active" aria-label="订单明细">
+          <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></svg>
+          <span class="nav-tip">订单明细</span>
+        </button>
+        <button class="nav-item" aria-label="商品分析">
+          <svg viewBox="0 0 24 24"><path d="M4 8l8-4 8 4-8 4-8-4z"/><path d="M4 8v8l8 4 8-4V8M12 12v8"/></svg>
+          <span class="nav-tip">商品分析</span>
+        </button>
+        <button class="nav-item" aria-label="店铺管理">
+          <svg viewBox="0 0 24 24"><path d="M3 10l2-6h14l2 6"/><path d="M5 10v10h14V10M9 20v-6h6v6"/><path d="M3 10a3 3 0 006 0 3 3 0 006 0 3 3 0 006 0"/></svg>
+          <span class="nav-tip">店铺管理</span>
+        </button>
+      </nav>
+      <button class="nav-item sidebar-foot" aria-label="设置">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0015 19.4a1.7 1.7 0 00-1 .6 1.7 1.7 0 00-.4 1.1V21H9.6v-.09A1.7 1.7 0 008.55 19.4a1.7 1.7 0 00-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-.6-1 1.7 1.7 0 00-1.1-.4H3V9.6h.09A1.7 1.7 0 004.6 8.55a1.7 1.7 0 00-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-.6 1.7 1.7 0 00.4-1.1V3h4v.09A1.7 1.7 0 0015.45 4.6a1.7 1.7 0 001.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0019.4 9c.4.25.72.6.9 1 .11.25.16.53.16.8v.1H21v4h-.09A1.7 1.7 0 0019.4 15z"/></svg>
+        <span class="nav-tip">系统设置</span>
+      </button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="brand">
+          <div class="menu-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="brand-name">万象经营后台</div>
+          <div class="workspace-chip">全渠道经营空间 <span>⌄</span></div>
+        </div>
+        <div class="profile">
+          <button class="top-action" aria-label="帮助">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 114.6 1c-.6 1-2.3 1.3-2.3 3M12 17h.01"/></svg>
+          </button>
+          <button class="top-action" aria-label="消息">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 8h18c0-1-3-1-3-8M10 20h4"/></svg>
+          </button>
+          <div class="avatar">肖</div>
+          <div class="user-meta">
+            <div class="user-name">肖女士</div>
+            <div class="user-role">数据管理员</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="page-head">
+          <h1>订单明细</h1>
+        </div>
+
+        <section class="panel filter-panel" aria-label="订单筛选">
+          <div class="filter-grid">
+            <label class="filter-field">
+              <span class="filter-label">日期</span>
+              <span class="date-range">
+                <input id="startDate" type="date" value="2026-06-01" />
+                <span>至</span>
+                <input id="endDate" type="date" value="2026-06-30" />
+              </span>
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">线上订单编号</span>
+              <input id="orderNo" class="control" placeholder="请输入订单编号或子订单编号" />
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">订单状态</span>
+              <select id="orderStatus" class="control">
+                <option value="">全部状态</option>
+                <option>已完成</option>
+                <option>待发货</option>
+                <option>已退货</option>
+                <option>交易关闭</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">平台渠道</span>
+              <select id="platform" class="control">
+                <option value="">全部平台</option>
+                <option>头条放心购</option>
+                <option>淘宝天猫</option>
+                <option>快手电商</option>
+                <option>微信视频号</option>
+                <option>线下店铺</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">店铺名称</span>
+              <select id="storeName" class="control">
+                <option value="">全部店铺</option>
+                <option>Daphne达芙妮行李箱旗舰店-抖音</option>
+                <option>daphne达芙妮旅行箱旗舰店-天猫</option>
+                <option>DAPHNE达芙妮功能箱包旗舰店-快手</option>
+                <option>达人样品</option>
+                <option>杭州拍摄间</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">订单渠道来源</span>
+              <select id="source" class="control">
+                <option value="">全部来源</option>
+                <option>直播间</option>
+                <option>短视频</option>
+                <option>商品卡</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">SKU / SPU</span>
+              <input id="sku" class="control" placeholder="请输入 SKU 或 SPU" />
+            </label>
+            <label class="filter-field">
+              <span class="filter-label">商品名称</span>
+              <input id="productName" class="control" placeholder="请输入商品名称" />
+            </label>
+          </div>
+
+          <div id="advancedFilters" class="advanced">
+            <div class="filter-grid">
+              <label class="filter-field">
+                <span class="filter-label">订单类别</span>
+                <select id="orderType" class="control">
+                  <option value="">全部类别</option>
+                  <option>销售单</option>
+                  <option>退货单</option>
+                </select>
+              </label>
+              <label class="filter-field">
+                <span class="filter-label">达人</span>
+                <input id="creator" class="control" placeholder="请输入达人名称" />
+              </label>
+              <label class="filter-field">
+                <span class="filter-label">商品标签</span>
+                <select id="productTag" class="control">
+                  <option value="">全部标签</option>
+                  <option>在售产品</option>
+                  <option>赠品</option>
+                  <option>通货</option>
+                  <option>不发货</option>
+                  <option>配件</option>
+                </select>
+              </label>
+              <label class="filter-field">
+                <span class="filter-label">商品类目</span>
+                <select id="category" class="control">
+                  <option value="">全部类目</option>
+                  <option>旅行箱</option>
+                  <option>旅行配件</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-footer">
+            <button id="advancedToggle" class="btn ghost">
+              高级筛选
+              <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg>
+            </button>
+            <div class="filter-actions">
+              <span class="filter-note">筛选范围将同步影响列表与导出</span>
+              <button id="resetBtn" class="btn">重置</button>
+              <button id="searchBtn" class="btn primary">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+                查询
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel table-panel" aria-label="订单明细列表">
+          <div class="table-toolbar">
+            <div>
+              <div class="result-title">
+                <strong>订单记录</strong>
+                <span class="result-count">共 <b id="recordCount">5</b> 条</span>
+              </div>
+              <div class="summary-line">销售金额 <em id="salesSummary">¥4,292.00</em> · 退款金额 <em id="refundSummary">¥699.00</em></div>
+            </div>
+            <div class="toolbar-actions">
+              <button id="columnBtn" class="btn">
+                <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM10 5v14M16 5v14"/></svg>
+                自定义字段
+                <span id="selectedCount">12/30</span>
+              </button>
+              <button id="exportBtn" class="btn primary">
+                <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 19h14"/></svg>
+                导出
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table id="orderTable">
+              <thead><tr id="tableHead"></tr></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <span id="rangeText">第 1–5 条，共 5 条</span>
+            <div class="pages">
+              <button class="page-btn" disabled>‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <span>…</span>
+              <button class="page-btn">21</button>
+              <button class="page-btn">›</button>
+              <select class="control" style="width: 90px; height: 32px">
+                <option>20 条/页</option>
+                <option>50 条/页</option>
+                <option>100 条/页</option>
+              </select>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="mask" class="mask"></div>
+
+  <aside id="columnDrawer" class="drawer" aria-label="自定义字段">
+    <div class="drawer-head">
+      <div class="drawer-title">
+        <strong>自定义字段</strong>
+        <span>选择列表中需要展示的订单字段</span>
+      </div>
+      <button id="closeDrawer" class="icon-btn" aria-label="关闭">×</button>
+    </div>
+    <div class="drawer-tools">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="fieldSearch" class="control" placeholder="搜索字段名称" />
+      </div>
+      <div class="tool-row">
+        <span>已选择 <b id="drawerSelected">12</b> / 30 个字段</span>
+        <span><button id="selectAll" class="text-btn">全选</button>　<button id="restoreDefault" class="text-btn">恢复默认</button></span>
+      </div>
+    </div>
+    <div id="columnList" class="column-list"></div>
+    <div class="drawer-foot">
+      <button id="cancelColumns" class="btn">取消</button>
+      <button id="applyColumns" class="btn primary">应用字段</button>
+    </div>
+  </aside>
+
+  <section id="exportModal" class="modal" role="dialog" aria-modal="true" aria-label="导出订单明细">
+    <div class="modal-head">
+      <div>
+        <h2>导出订单明细</h2>
+        <p>导出文件将依据当前筛选条件生成</p>
+      </div>
+      <button id="closeExport" class="icon-btn" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <label class="export-option">
+        <input type="radio" name="exportRange" value="visible" checked />
+        <span>
+          <strong>导出当前所选字段</strong>
+          <span>共 <b id="exportSelectedCount">12</b> 个字段，适合当前分析场景</span>
+        </span>
+      </label>
+      <label class="export-option">
+        <input type="radio" name="exportRange" value="all" />
+        <span>
+          <strong>导出全部字段</strong>
+          <span>包含 Excel 模版中的全部 30 个字段</span>
+        </span>
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button id="cancelExport" class="btn">取消</button>
+      <button id="confirmExport" class="btn primary">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 19h14"/></svg>
+        导出 CSV
+      </button>
+    </div>
+  </section>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const fields = [
+      { key: "date", label: "日期", group: "订单信息", width: 110 },
+      { key: "orderNo", label: "线上订单编号", group: "订单信息", width: 180 },
+      { key: "orderType", label: "订单类别", group: "订单信息", width: 95 },
+      { key: "status", label: "订单状态", group: "订单信息", width: 100 },
+      { key: "platform", label: "平台渠道", group: "渠道与店铺", width: 120 },
+      { key: "store", label: "店铺名称", group: "渠道与店铺", width: 240 },
+      { key: "source", label: "订单渠道来源", group: "渠道与店铺", width: 120 },
+      { key: "creator", label: "达人", group: "渠道与店铺", width: 120 },
+      { key: "spu", label: "SPU", group: "商品信息", width: 105 },
+      { key: "color", label: "颜色", group: "商品信息", width: 100 },
+      { key: "size", label: "尺码", group: "商品信息", width: 80 },
+      { key: "sku", label: "SKU", group: "商品信息", width: 190 },
+      { key: "tag", label: "商品标签", group: "商品信息", width: 110 },
+      { key: "category", label: "商品类目", group: "商品信息", width: 100 },
+      { key: "productName", label: "商品名称", group: "商品信息", width: 230 },
+      { key: "basePrice", label: "基础售价", group: "价格与销售", width: 105, money: true },
+      { key: "costPrice", label: "成本价格", group: "价格与销售", width: 105, money: true },
+      { key: "discountPrice", label: "店铺优惠价", group: "价格与销售", width: 110, money: true },
+      { key: "storePrice", label: "店铺售价", group: "价格与销售", width: 105, money: true },
+      { key: "dealPrice", label: "成交价", group: "价格与销售", width: 100, money: true },
+      { key: "salesQty", label: "销售数量", group: "价格与销售", width: 100 },
+      { key: "salesAmount", label: "销售金额", group: "价格与销售", width: 110, money: true },
+      { key: "platformDiscount", label: "订单优惠平台承担部分", group: "价格与销售", width: 170, money: true },
+      { key: "salesCost", label: "销售成本", group: "价格与销售", width: 105, money: true },
+      { key: "shippedQty", label: "实发数量", group: "履约与售后", width: 100 },
+      { key: "shippedAmount", label: "实发金额", group: "履约与售后", width: 110, money: true },
+      { key: "returnQty", label: "退货数量", group: "履约与售后", width: 100 },
+      { key: "returnAmount", label: "退货金额", group: "履约与售后", width: 110, money: true },
+      { key: "preRefundQty", label: "发货前退款数量", group: "履约与售后", width: 130 },
+      { key: "preRefundAmount", label: "发货前退款金额", group: "履约与售后", width: 140, money: true }
+    ];
+
+    const defaultKeys = [
+      "date", "orderNo", "status", "platform", "store", "source",
+      "sku", "productName", "dealPrice", "salesQty", "salesAmount", "returnAmount"
+    ];
+
+    const orders = [
+      {
+        date: "2026-06-30", orderNo: "DO20260630001842-01", orderType: "销售单", status: "已完成",
+        platform: "头条放心购", store: "Daphne达芙妮行李箱旗舰店-抖音", source: "直播间", creator: "小鹿测评",
+        spu: "DJC2501", color: "粉色", size: "28寸", sku: "DJC2501-粉色-28寸", tag: "在售产品",
+        category: "旅行箱", productName: "达芙妮前开盖多功能旅行箱", basePrice: 1099, costPrice: 358,
+        discountPrice: 969, storePrice: 999, dealPrice: 899, salesQty: 2, salesAmount: 1798,
+        platformDiscount: 60, salesCost: 716, shippedQty: 2, shippedAmount: 1798,
+        returnQty: 0, returnAmount: 0, preRefundQty: 0, preRefundAmount: 0
+      },
+      {
+        date: "2026-06-29", orderNo: "TM20260629009371-01", orderType: "销售单", status: "待发货",
+        platform: "淘宝天猫", store: "daphne达芙妮旅行箱旗舰店-天猫", source: "短视频", creator: "—",
+        spu: "DJC2501", color: "开运红", size: "28寸", sku: "DJC2501-1-开运红-28寸", tag: "在售产品",
+        category: "旅行箱", productName: "达芙妮前开盖多功能旅行箱", basePrice: 1099, costPrice: 358,
+        discountPrice: 989, storePrice: 999, dealPrice: 929, salesQty: 1, salesAmount: 929,
+        platformDiscount: 20, salesCost: 358, shippedQty: 0, shippedAmount: 0,
+        returnQty: 0, returnAmount: 0, preRefundQty: 0, preRefundAmount: 0
+      },
+      {
+        date: "2026-06-28", orderNo: "KS20260628004722-02", orderType: "销售单", status: "已完成",
+        platform: "快手电商", store: "DAPHNE达芙妮功能箱包旗舰店-快手", source: "商品卡", creator: "旅行研究所",
+        spu: "ZPQT003", color: "冰川蓝", size: "24寸", sku: "DJC2501-1-冰川蓝-24寸", tag: "通货",
+        category: "旅行箱", productName: "轻盈大容量拉杆旅行箱", basePrice: 899, costPrice: 286,
+        discountPrice: 769, storePrice: 799, dealPrice: 699, salesQty: 2, salesAmount: 1398,
+        platformDiscount: 40, salesCost: 572, shippedQty: 2, shippedAmount: 1398,
+        returnQty: 0, returnAmount: 0, preRefundQty: 0, preRefundAmount: 0
+      },
+      {
+        date: "2026-06-27", orderNo: "XX20260627000136-01", orderType: "销售单", status: "已退货",
+        platform: "线下店铺", store: "达人样品", source: "—", creator: "箱包老张",
+        spu: "6039", color: "灰色", size: "26寸", sku: "6039-灰色-26寸", tag: "不发货,赠品",
+        category: "旅行箱", productName: "铝框商务旅行箱", basePrice: 999, costPrice: 320,
+        discountPrice: 799, storePrice: 829, dealPrice: 699, salesQty: 1, salesAmount: 699,
+        platformDiscount: 0, salesCost: 320, shippedQty: 1, shippedAmount: 699,
+        returnQty: 1, returnAmount: 699, preRefundQty: 0, preRefundAmount: 0
+      },
+      {
+        date: "2026-06-26", orderNo: "WX20260626002389-01", orderType: "销售单", status: "交易关闭",
+        platform: "微信视频号", store: "杭州拍摄间", source: "直播间", creator: "杭州拍摄间",
+        spu: "DJC2501", color: "开运红", size: "20寸", sku: "DJC2501-1-开运红-20寸", tag: "配件",
+        category: "旅行配件", productName: "旅行箱同色收纳套装", basePrice: 99, costPrice: 28,
+        discountPrice: 79, storePrice: 89, dealPrice: 69, salesQty: 1, salesAmount: 69,
+        platformDiscount: 5, salesCost: 28, shippedQty: 0, shippedAmount: 0,
+        returnQty: 0, returnAmount: 0, preRefundQty: 1, preRefundAmount: 69
+      }
+    ];
+
+    let selectedKeys = [...defaultKeys];
+    let draftKeys = [...defaultKeys];
+    let filteredOrders = [...orders];
+
+    const $ = (id) => document.getElementById(id);
+    const money = (value) => `¥${Number(value || 0).toLocaleString("zh-CN", { minimumFractionDigits: 2 })}`;
+
+    function statusTag(status) {
+      const classMap = { "已完成": "success", "待发货": "warning", "已退货": "danger", "交易关闭": "" };
+      return `<span class="tag ${classMap[status] || ""}">${status}</span>`;
+    }
+
+    function cellContent(field, row) {
+      const value = row[field.key];
+      if (field.key === "orderNo") return `<button class="link" onclick="showToast('已打开订单 ${value} 的详情预览')">${value}</button>`;
+      if (field.key === "status") return statusTag(value);
+      if (field.key === "tag") return `<span class="tag primary">${value}</span>`;
+      if (field.money) {
+        const cls = field.key.includes("return") || field.key.includes("Refund") ? "negative" : "";
+        return `<span class="${cls}">${money(value)}</span>`;
+      }
+      if (value === "—" || value === "" || value == null) return `<span class="muted-cell">—</span>`;
+      return String(value);
+    }
+
+    function renderTable() {
+      const activeFields = selectedKeys.map(key => fields.find(field => field.key === key)).filter(Boolean);
+      $("tableHead").innerHTML = activeFields.map(field =>
+        `<th style="width:${field.width}px;${field.money ? "text-align:right" : ""}">${field.label}</th>`
+      ).join("");
+
+      if (!filteredOrders.length) {
+        $("tableBody").innerHTML = `<tr><td colspan="${activeFields.length}"><div class="empty">未找到符合当前条件的订单，请调整筛选项</div></td></tr>`;
+      } else {
+        $("tableBody").innerHTML = filteredOrders.map(row =>
+          `<tr>${activeFields.map(field =>
+            `<td class="${field.money ? "money" : ""}" title="${String(row[field.key] ?? "")}">${cellContent(field, row)}</td>`
+          ).join("")}</tr>`
+        ).join("");
+      }
+
+      const sales = filteredOrders.reduce((sum, row) => sum + row.salesAmount, 0);
+      const refunds = filteredOrders.reduce((sum, row) => sum + row.returnAmount + row.preRefundAmount, 0);
+      $("recordCount").textContent = filteredOrders.length;
+      $("rangeText").textContent = filteredOrders.length ? `第 1–${filteredOrders.length} 条，共 ${filteredOrders.length} 条` : "共 0 条";
+      $("salesSummary").textContent = money(sales);
+      $("refundSummary").textContent = money(refunds);
+      $("selectedCount").textContent = `${selectedKeys.length}/30`;
+      $("exportSelectedCount").textContent = selectedKeys.length;
+    }
+
+    function renderColumnList(query = "") {
+      const groups = [...new Set(fields.map(field => field.group))];
+      const keyword = query.trim().toLowerCase();
+      $("columnList").innerHTML = groups.map(group => {
+        const groupFields = fields.filter(field => field.group === group && field.label.toLowerCase().includes(keyword));
+        if (!groupFields.length) return "";
+        return `
+          <div class="column-group-label">${group}</div>
+          ${groupFields.map(field => `
+            <label class="column-item">
+              <input type="checkbox" value="${field.key}" ${draftKeys.includes(field.key) ? "checked" : ""} />
+              <span>${field.label}</span>
+              <span class="field-mark">${field.money ? "金额" : "字段"}</span>
+            </label>
+          `).join("")}
+        `;
+      }).join("");
+      $("drawerSelected").textContent = draftKeys.length;
+    }
+
+    function openDrawer() {
+      draftKeys = [...selectedKeys];
+      renderColumnList();
+      $("columnDrawer").classList.add("show");
+      $("mask").classList.add("show");
+    }
+
+    function closeOverlays() {
+      $("columnDrawer").classList.remove("show");
+      $("exportModal").classList.remove("show");
+      $("mask").classList.remove("show");
+    }
+
+    function openExport() {
+      $("exportSelectedCount").textContent = selectedKeys.length;
+      $("exportModal").classList.add("show");
+      $("mask").classList.add("show");
+    }
+
+    function applyFilters() {
+      const values = {
+        orderNo: $("orderNo").value.trim().toLowerCase(),
+        status: $("orderStatus").value,
+        platform: $("platform").value,
+        store: $("storeName").value,
+        source: $("source").value,
+        sku: $("sku").value.trim().toLowerCase(),
+        productName: $("productName").value.trim().toLowerCase(),
+        orderType: $("orderType").value,
+        creator: $("creator").value.trim().toLowerCase(),
+        tag: $("productTag").value,
+        category: $("category").value,
+        startDate: $("startDate").value,
+        endDate: $("endDate").value
+      };
+
+      filteredOrders = orders.filter(row =>
+        (!values.orderNo || row.orderNo.toLowerCase().includes(values.orderNo)) &&
+        (!values.status || row.status === values.status) &&
+        (!values.platform || row.platform === values.platform) &&
+        (!values.store || row.store === values.store) &&
+        (!values.source || row.source === values.source) &&
+        (!values.sku || row.sku.toLowerCase().includes(values.sku) || row.spu.toLowerCase().includes(values.sku)) &&
+        (!values.productName || row.productName.toLowerCase().includes(values.productName)) &&
+        (!values.orderType || row.orderType === values.orderType) &&
+        (!values.creator || row.creator.toLowerCase().includes(values.creator)) &&
+        (!values.tag || row.tag.includes(values.tag)) &&
+        (!values.category || row.category === values.category) &&
+        (!values.startDate || row.date >= values.startDate) &&
+        (!values.endDate || row.date <= values.endDate)
+      );
+      renderTable();
+      showToast(`已找到 ${filteredOrders.length} 条订单`);
+    }
+
+    function resetFilters() {
+      document.querySelectorAll(".filter-panel input:not([type='date'])").forEach(input => input.value = "");
+      document.querySelectorAll(".filter-panel select").forEach(select => select.selectedIndex = 0);
+      $("startDate").value = "2026-06-01";
+      $("endDate").value = "2026-06-30";
+      filteredOrders = [...orders];
+      renderTable();
+      showToast("筛选条件已重置");
+    }
+
+    function escapeCsv(value) {
+      const text = String(value ?? "");
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    function exportCsv() {
+      const range = document.querySelector("input[name='exportRange']:checked").value;
+      const keys = range === "all" ? fields.map(field => field.key) : selectedKeys;
+      const exportFields = keys.map(key => fields.find(field => field.key === key));
+      const rows = [
+        exportFields.map(field => escapeCsv(field.label)).join(","),
+        ...filteredOrders.map(row => exportFields.map(field => escapeCsv(row[field.key])).join(","))
+      ];
+      const blob = new Blob(["\ufeff" + rows.join("\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `订单明细_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      closeOverlays();
+      showToast(`已导出 ${filteredOrders.length} 条订单、${exportFields.length} 个字段`);
+    }
+
+    let toastTimer;
+    function showToast(message) {
+      $("toast").textContent = message;
+      $("toast").classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => $("toast").classList.remove("show"), 2200);
+    }
+
+    $("advancedToggle").addEventListener("click", () => {
+      const isShown = $("advancedFilters").classList.toggle("show");
+      $("advancedToggle").childNodes[0].nodeValue = isShown ? "收起筛选 " : "高级筛选 ";
+    });
+    $("searchBtn").addEventListener("click", applyFilters);
+    $("resetBtn").addEventListener("click", resetFilters);
+    $("columnBtn").addEventListener("click", openDrawer);
+    $("exportBtn").addEventListener("click", openExport);
+    $("closeDrawer").addEventListener("click", closeOverlays);
+    $("cancelColumns").addEventListener("click", closeOverlays);
+    $("closeExport").addEventListener("click", closeOverlays);
+    $("cancelExport").addEventListener("click", closeOverlays);
+    $("mask").addEventListener("click", closeOverlays);
+    $("confirmExport").addEventListener("click", exportCsv);
+
+    $("columnList").addEventListener("change", event => {
+      if (event.target.type !== "checkbox") return;
+      const key = event.target.value;
+      if (event.target.checked) {
+        if (!draftKeys.includes(key)) draftKeys.push(key);
+      } else {
+        draftKeys = draftKeys.filter(item => item !== key);
+      }
+      $("drawerSelected").textContent = draftKeys.length;
+    });
+
+    $("fieldSearch").addEventListener("input", event => renderColumnList(event.target.value));
+    $("selectAll").addEventListener("click", () => {
+      draftKeys = draftKeys.length === fields.length ? [] : fields.map(field => field.key);
+      renderColumnList($("fieldSearch").value);
+    });
+    $("restoreDefault").addEventListener("click", () => {
+      draftKeys = [...defaultKeys];
+      renderColumnList($("fieldSearch").value);
+    });
+    $("applyColumns").addEventListener("click", () => {
+      if (!draftKeys.length) {
+        showToast("请至少选择 1 个字段");
+        return;
+      }
+      selectedKeys = fields.map(field => field.key).filter(key => draftKeys.includes(key));
+      renderTable();
+      closeOverlays();
+      showToast(`已应用 ${selectedKeys.length} 个展示字段`);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeOverlays();
+      if (event.key === "Enter" && event.target.closest(".filter-panel")) applyFilters();
+    });
+
+    renderColumnList();
+    renderTable();
+  </script>
+</body>
+</html>
