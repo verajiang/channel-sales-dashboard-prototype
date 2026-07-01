@@ -1052,13 +1052,13 @@
                 <strong>订单记录</strong>
                 <span class="result-count">共 <b id="recordCount">5</b> 条</span>
               </div>
-              <div class="summary-line">销售金额 <em id="salesSummary">¥4,292.00</em> · 退款金额 <em id="refundSummary">¥699.00</em></div>
+              <div class="summary-line">实付金额 <em id="paidSummary">¥4,824.00</em> · 退款金额 <em id="refundSummary">¥768.00</em></div>
             </div>
             <div class="toolbar-actions">
               <button id="columnBtn" class="btn">
                 <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM10 5v14M16 5v14"/></svg>
                 自定义字段
-                <span id="selectedCount">12/30</span>
+                <span id="selectedCount">14/32</span>
               </button>
               <button id="exportBtn" class="btn primary">
                 <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 19h14"/></svg>
@@ -1112,7 +1112,7 @@
         <input id="fieldSearch" class="control" placeholder="搜索字段名称" />
       </div>
       <div class="tool-row">
-        <span>已选择 <b id="drawerSelected">12</b> / 30 个字段</span>
+        <span>已选择 <b id="drawerSelected">14</b> / 32 个字段</span>
         <span><button id="selectAll" class="text-btn">全选</button>　<button id="restoreDefault" class="text-btn">恢复默认</button></span>
       </div>
     </div>
@@ -1136,14 +1136,14 @@
         <input type="radio" name="exportRange" value="visible" checked />
         <span>
           <strong>导出当前所选字段</strong>
-          <span>共 <b id="exportSelectedCount">12</b> 个字段，适合当前分析场景</span>
+          <span>共 <b id="exportSelectedCount">14</b> 个字段，适合当前分析场景</span>
         </span>
       </label>
       <label class="export-option">
         <input type="radio" name="exportRange" value="all" />
         <span>
           <strong>导出全部字段</strong>
-          <span>包含 Excel 模版中的全部 30 个字段</span>
+          <span>包含当前订单明细中的全部 32 个字段</span>
         </span>
       </label>
     </div>
@@ -1180,8 +1180,10 @@
       { key: "discountPrice", label: "店铺优惠价", group: "价格与销售", width: 110, money: true },
       { key: "storePrice", label: "店铺售价", group: "价格与销售", width: 105, money: true },
       { key: "dealPrice", label: "成交价", group: "价格与销售", width: 100, money: true },
-      { key: "salesQty", label: "销售数量", group: "价格与销售", width: 100 },
-      { key: "salesAmount", label: "销售金额", group: "价格与销售", width: 110, money: true },
+      { key: "payableAmount", label: "应付金额", group: "价格与销售", width: 110, money: true },
+      { key: "payableQty", label: "应付数量", group: "价格与销售", width: 100 },
+      { key: "paidAmount", label: "实付金额", group: "价格与销售", width: 110, money: true },
+      { key: "paidQty", label: "实付数量", group: "价格与销售", width: 100 },
       { key: "platformDiscount", label: "订单优惠平台承担部分", group: "价格与销售", width: 170, money: true },
       { key: "salesCost", label: "销售成本", group: "价格与销售", width: 105, money: true },
       { key: "shippedQty", label: "实发数量", group: "履约与售后", width: 100 },
@@ -1194,7 +1196,7 @@
 
     const defaultKeys = [
       "date", "orderNo", "status", "platform", "store", "source",
-      "sku", "productName", "dealPrice", "salesQty", "salesAmount", "returnAmount"
+      "sku", "productName", "dealPrice", "payableAmount", "payableQty", "paidAmount", "paidQty", "returnAmount"
     ];
 
     const orders = [
@@ -1203,7 +1205,8 @@
         platform: "头条放心购", store: "Daphne达芙妮行李箱旗舰店-抖音", source: "直播间", creator: "小鹿测评",
         spu: "DJC2501", color: "粉色", size: "28寸", sku: "DJC2501-粉色-28寸", tag: "在售产品",
         category: "旅行箱", productName: "达芙妮前开盖多功能旅行箱", basePrice: 1099, costPrice: 358,
-        discountPrice: 969, storePrice: 999, dealPrice: 899, salesQty: 2, salesAmount: 1798,
+        discountPrice: 969, storePrice: 999, dealPrice: 899,
+        payableAmount: 1798, payableQty: 2, paidAmount: 1798, paidQty: 2,
         platformDiscount: 60, salesCost: 716, shippedQty: 2, shippedAmount: 1798,
         returnQty: 0, returnAmount: 0, preRefundQty: 0, preRefundAmount: 0
       },
@@ -1212,7 +1215,8 @@
         platform: "淘宝天猫", store: "daphne达芙妮旅行箱旗舰店-天猫", source: "短视频", creator: "—",
         spu: "DJC2501", color: "开运红", size: "28寸", sku: "DJC2501-1-开运红-28寸", tag: "在售产品",
         category: "旅行箱", productName: "达芙妮前开盖多功能旅行箱", basePrice: 1099, costPrice: 358,
-        discountPrice: 989, storePrice: 999, dealPrice: 929, salesQty: 1, salesAmount: 929,
+        discountPrice: 989, storePrice: 999, dealPrice: 929,
+        payableAmount: 929, payableQty: 1, paidAmount: 929, paidQty: 1,
         platformDiscount: 20, salesCost: 358, shippedQty: 0, shippedAmount: 0,
         returnQty: 0, returnAmount: 0, preRefundQty: 0, preRefundAmount: 0
       },
@@ -1221,7 +1225,8 @@
         platform: "快手电商", store: "DAPHNE达芙妮功能箱包旗舰店-快手", source: "商品卡", creator: "旅行研究所",
         spu: "ZPQT003", color: "冰川蓝", size: "24寸", sku: "DJC2501-1-冰川蓝-24寸", tag: "通货",
         category: "旅行箱", productName: "轻盈大容量拉杆旅行箱", basePrice: 899, costPrice: 286,
-        discountPrice: 769, storePrice: 799, dealPrice: 699, salesQty: 2, salesAmount: 1398,
+        discountPrice: 769, storePrice: 799, dealPrice: 699,
+        payableAmount: 1398, payableQty: 2, paidAmount: 1398, paidQty: 2,
         platformDiscount: 40, salesCost: 572, shippedQty: 2, shippedAmount: 1398,
         returnQty: 0, returnAmount: 0, preRefundQty: 0, preRefundAmount: 0
       },
@@ -1230,7 +1235,8 @@
         platform: "线下店铺", store: "达人样品", source: "—", creator: "箱包老张",
         spu: "6039", color: "灰色", size: "26寸", sku: "6039-灰色-26寸", tag: "不发货,赠品",
         category: "旅行箱", productName: "铝框商务旅行箱", basePrice: 999, costPrice: 320,
-        discountPrice: 799, storePrice: 829, dealPrice: 699, salesQty: 1, salesAmount: 699,
+        discountPrice: 799, storePrice: 829, dealPrice: 699,
+        payableAmount: 699, payableQty: 1, paidAmount: 699, paidQty: 1,
         platformDiscount: 0, salesCost: 320, shippedQty: 1, shippedAmount: 699,
         returnQty: 1, returnAmount: 699, preRefundQty: 0, preRefundAmount: 0
       },
@@ -1239,7 +1245,8 @@
         platform: "微信视频号", store: "杭州拍摄间", source: "直播间", creator: "杭州拍摄间",
         spu: "DJC2501", color: "开运红", size: "20寸", sku: "DJC2501-1-开运红-20寸", tag: "配件",
         category: "旅行配件", productName: "旅行箱同色收纳套装", basePrice: 99, costPrice: 28,
-        discountPrice: 79, storePrice: 89, dealPrice: 69, salesQty: 1, salesAmount: 69,
+        discountPrice: 79, storePrice: 89, dealPrice: 69,
+        payableAmount: 69, payableQty: 1, paidAmount: 0, paidQty: 0,
         platformDiscount: 5, salesCost: 28, shippedQty: 0, shippedAmount: 0,
         returnQty: 0, returnAmount: 0, preRefundQty: 1, preRefundAmount: 69
       }
@@ -1286,13 +1293,13 @@
         ).join("");
       }
 
-      const sales = filteredOrders.reduce((sum, row) => sum + row.salesAmount, 0);
+      const paid = filteredOrders.reduce((sum, row) => sum + row.paidAmount, 0);
       const refunds = filteredOrders.reduce((sum, row) => sum + row.returnAmount + row.preRefundAmount, 0);
       $("recordCount").textContent = filteredOrders.length;
       $("rangeText").textContent = filteredOrders.length ? `第 1–${filteredOrders.length} 条，共 ${filteredOrders.length} 条` : "共 0 条";
-      $("salesSummary").textContent = money(sales);
+      $("paidSummary").textContent = money(paid);
       $("refundSummary").textContent = money(refunds);
-      $("selectedCount").textContent = `${selectedKeys.length}/30`;
+      $("selectedCount").textContent = `${selectedKeys.length}/${fields.length}`;
       $("exportSelectedCount").textContent = selectedKeys.length;
     }
 
